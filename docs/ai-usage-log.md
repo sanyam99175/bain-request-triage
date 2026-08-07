@@ -103,3 +103,41 @@ model base class, and a request-scoped database-session dependency.
 I chose a file-backed SQLite database for persistence without external services.
 The database URL can be replaced using the `DATABASE_URL` environment variable
 when a different database is needed.
+
+---
+
+## 2026-08-07 - Backend implementation
+
+### Prompt6
+```text
+I have added a feature branch from main for backend work. Lets start with
+implementing backend like tables, models, endpoints etc.
+```
+
+#### AI output / outcome
+AI proposed implementing the backend in small vertical slices, beginning with
+the core persisted request model and its database-table test.
+
+#### My review and action
+I started with the `business_requests` table so later structured-brief and
+triage records have a clear parent record. I used SQLAlchemy metadata creation
+at application startup for the prototype; production applications should use
+versioned migrations instead.
+
+---
+
+## 2026-08-07 - Complete persistence model
+
+### Prompt7
+```text
+Lets add all tables, models that are required for responses & other features etc.
+```
+
+#### AI output / outcome
+AI added models for the structured brief and triage-update history, and extended
+the business request model with its current triage state and relationships.
+
+#### My review and action
+I used a one-to-one relationship for the generated brief and a one-to-many
+relationship for triage history. List-like brief fields are stored as SQLite JSON
+values to preserve them as arrays without adding tables that the MVP does not need.
