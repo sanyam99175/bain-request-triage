@@ -1085,3 +1085,38 @@ request detail, and triage-history routes for both roles.
 The test now asserts that requestors receive `403` and reviewers receive `200`
 for all three reviewer pages. This covers backend authorization; React visibility
 and redirects remain a separate frontend-testing concern.
+
+---
+
+## 2026-08-11 - Requestor brief exposure review
+
+### Prompt58
+```text
+I found one issue after hosting on production. As a requestor, I can send a requestor but not be able to see the generted response in UI, but i can see that in response tab in network console. Is this an issue? Because as a requestor, I should not be able to see the generated brief. right?
+```
+
+#### AI output / outcome
+AI confirmed that the request-submission endpoint currently returns the complete
+structured brief to a requestor even though the React UI does not render it.
+
+#### My review and action
+No code change was made in this diagnostic step. The proposed fix is a dedicated
+requestor submission-response schema with acknowledgement-only fields; the full
+brief remains available only from reviewer-authorized endpoints.
+
+---
+
+## 2026-08-11 - Requestor-safe submission response
+
+### Prompt59
+```text
+yes lets implement it
+```
+
+#### AI output / outcome
+AI replaced the request-submission response with an acknowledgement-only schema
+and retained the complete brief solely in reviewer-authorized detail responses.
+
+#### My review and action
+I added tests asserting that requestor submission responses omit `brief` and
+triage history, while the reviewer detail response includes the structured brief.

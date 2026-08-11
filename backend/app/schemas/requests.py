@@ -41,6 +41,17 @@ class RequestSubmission(BaseModel):
         return value
 
 
+class RequestSubmissionResponse(BaseModel):
+    """Safe acknowledgement returned to the requestor after submission."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    status: str
+    created_at: datetime
+    generation_notice: str | None = None
+
+
 class GeneratedBrief(BaseModel):
     """The generated fields saved as a structured brief."""
 

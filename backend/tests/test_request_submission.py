@@ -46,21 +46,20 @@ def test_submit_request_generates_and_persists_brief() -> None:
 
     assert response.status_code == 201
     body = response.json()
-    assert body["raw_request"] == "Create a way to triage software requests."
     assert body["status"] == "new"
-    assert body["priority"] == "medium"
-    assert body["brief"]["problem_summary"] == (
-        "The requester needs support with: Create a way to triage software requests."
-    )
-    assert body["brief"]["recommended_solution_type"] == (
-        "Request intake and triage workflow"
-    )
-    assert len(body["brief"]["clarifying_questions"]) == 2
+    assert "brief" not in body
+    assert "triage_updates" not in body
 
     with Session(test_engine) as session:
         saved_request = session.scalar(select(BusinessRequest))
         assert saved_request is not None
+        assert saved_request.raw_request == "Create a way to triage software requests."
         assert saved_request.brief is not None
+        assert saved_request.brief.problem_summary == (
+            "The requester needs support with: Create a way to triage software requests."
+        )
+        assert saved_request.brief.recommended_solution_type == "Request intake and triage workflow"
+        assert len(saved_request.brief.clarifying_questions) == 2
         assert saved_request.brief.suggested_next_action == (
             "Assign a reviewer to validate scope and priority."
         )
@@ -184,7 +183,13 @@ def test_submit_request_uses_mock_and_returns_notice_when_ai_is_unavailable(monk
     assert response.json()["generation_notice"] == (
         "AI generation is unavailable, so this brief was generated using the mock service."
     )
-    assert response.json()["brief"]["recommended_solution_type"] == "Workflow automation"
+    assert "brief" not in response.json()
+
+    with Session(test_engine) as session:
+        saved_request = session.scalar(select(BusinessRequest))
+        assert saved_request is not None
+        assert saved_request.brief is not None
+        assert saved_request.brief.recommended_solution_type == "Workflow automation"
 
 
 def test_get_request_returns_saved_structured_brief() -> None:

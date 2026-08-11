@@ -16,6 +16,7 @@ from app.schemas.requests import (
     BusinessRequestQueuePage,
     BusinessRequestResponse,
     RequestSubmission,
+    RequestSubmissionResponse,
     TriageUpdateResponse,
     TriageUpdateSubmission,
 )
@@ -175,16 +176,16 @@ def update_triage(
         ) from error
 
 
-@router.post("", response_model=BusinessRequestResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=RequestSubmissionResponse, status_code=status.HTTP_201_CREATED)
 def submit_request(
     payload: RequestSubmission,
     session: Annotated[Session, Depends(get_db)],
     _requestor: Annotated[User, Depends(require_role("requestor"))],
-) -> BusinessRequestResponse:
-    """Save a submitted request with its generated structured brief."""
+) -> RequestSubmissionResponse:
+    """Save a request and return only a requestor-safe acknowledgement."""
     generator = get_brief_generator(payload.generation_mode)
     try:
-        response = BusinessRequestResponse.model_validate(
+        response = RequestSubmissionResponse.model_validate(
             create_business_request(
                 session,
                 payload.raw_request,

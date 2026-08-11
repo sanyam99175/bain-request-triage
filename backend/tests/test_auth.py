@@ -186,8 +186,10 @@ def test_request_endpoints_enforce_requestor_and_reviewer_roles() -> None:
     assert forbidden_queue_response.status_code == 403
     assert reviewer_queue_response.status_code == 200
     assert requestor_submission.status_code == 201
+    assert "brief" not in requestor_submission.json()
     assert forbidden_detail_response.status_code == 403
     assert reviewer_detail_response.status_code == 200
+    assert "brief" in reviewer_detail_response.json()
     assert forbidden_history_response.status_code == 403
     assert reviewer_history_response.status_code == 200
     assert forbidden_submission.status_code == 403
