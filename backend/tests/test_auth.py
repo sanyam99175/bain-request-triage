@@ -161,6 +161,19 @@ def test_request_endpoints_enforce_requestor_and_reviewer_roles() -> None:
             headers=requestor_headers,
             json={"raw_request": "Create a secure request workflow."},
         )
+        request_id = requestor_submission.json()["id"]
+        forbidden_detail_response = client.get(
+            f"/requests/{request_id}", headers=requestor_headers
+        )
+        reviewer_detail_response = client.get(
+            f"/requests/{request_id}", headers=reviewer_headers
+        )
+        forbidden_history_response = client.get(
+            f"/requests/{request_id}/triage-history", headers=requestor_headers
+        )
+        reviewer_history_response = client.get(
+            f"/requests/{request_id}/triage-history", headers=reviewer_headers
+        )
         forbidden_submission = client.post(
             "/requests",
             headers=reviewer_headers,
@@ -173,4 +186,8 @@ def test_request_endpoints_enforce_requestor_and_reviewer_roles() -> None:
     assert forbidden_queue_response.status_code == 403
     assert reviewer_queue_response.status_code == 200
     assert requestor_submission.status_code == 201
+    assert forbidden_detail_response.status_code == 403
+    assert reviewer_detail_response.status_code == 200
+    assert forbidden_history_response.status_code == 403
+    assert reviewer_history_response.status_code == 200
     assert forbidden_submission.status_code == 403

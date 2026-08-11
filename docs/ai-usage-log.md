@@ -1049,3 +1049,39 @@ near-duplicate request warnings.
 No code change was made. The current rule requires at least three shared words
 and 70% overlap among normalized unique words, so it remains explainable and
 does not rely on an external AI service.
+
+---
+
+## 2026-08-11 - Test coverage and role visibility audit
+
+### Prompt56
+```text
+Have we covered all test cases? Did we add a test case to check requester & reviewer separate visibilty?
+```
+
+#### AI output / outcome
+AI audited the current suite and found partial API role-separation coverage but
+no React component or browser-level visibility tests.
+
+#### My review and action
+No test was added in this audit step. The recommended next increment is to add
+focused API tests that deny requestors access to detail, history, and triage
+updates, then add frontend tests for role-specific navigation and route guards.
+
+---
+
+## 2026-08-11 - Reviewer page authorization tests
+
+### Prompt57
+```text
+Can we not add backend test cases to check routes and accessibility in a way that requesteor cannot access /requests . If yes, let's add minimal test cases to verify requestor and reviewer accessibility to 3 pagesd we have
+```
+
+#### AI output / outcome
+AI expanded the existing backend authorization test to cover the reviewer queue,
+request detail, and triage-history routes for both roles.
+
+#### My review and action
+The test now asserts that requestors receive `403` and reviewers receive `200`
+for all three reviewer pages. This covers backend authorization; React visibility
+and redirects remain a separate frontend-testing concern.
