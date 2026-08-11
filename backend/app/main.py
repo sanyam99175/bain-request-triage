@@ -20,6 +20,9 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="Business Request Triage API", lifespan=lifespan)
+@app.get("/api/health", tags=["Health"])
+def health_check():
+    return {"status": "ok"}
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
