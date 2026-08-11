@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,12 +24,17 @@ app = FastAPI(title="Business Request Triage API", lifespan=lifespan)
 @app.get("/api/health", tags=["Health"])
 def health_check():
     return {"status": "ok"}
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=False,
-    allow_methods=["GET", "PATCH", "POST"],
-    allow_headers=["Content-Type", "Authorization"],
+    allow_origins=[
+        "http://localhost:5173",
+        frontend_url,
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 app.include_router(requests_router)
 app.include_router(auth_router)
